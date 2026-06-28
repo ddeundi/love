@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRINCESS — Love Archetype Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fdf8f3; --bg2:#f5f0eb; --accent:#e4a4bd; --ink:#262626;
+    --ease:cubic-bezier(0.16,1,0.3,1);
+    --line:rgba(38,38,38,.12);
+    --font:'League Spartan','Noto Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.4;overflow-x:hidden}
+  ::selection{background:var(--accent);color:var(--ink)}
+  h1,h2,h3,h4,.q-text,.res-name{word-break:keep-all}
+
+  .util{font-size:10px;font-weight:900;letter-spacing:.4em;text-transform:uppercase}
+  .accent{color:var(--accent)}
+  .ital{font-style:italic;color:var(--accent);font-weight:500}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;height:72px;z-index:50;display:flex;align-items:center;justify-content:space-between;
+    padding:0 clamp(20px,5vw,56px);background:rgba(253,248,243,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(38,38,38,.05)}
+  .brand{font-weight:900;font-size:18px;letter-spacing:.04em;text-transform:uppercase}
+  .brand b{color:var(--accent)}
+  .nav-mid{font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:rgba(38,38,38,.5)}
+  @media(max-width:640px){.nav-mid{display:none}}
+  .nav-cta{font-family:var(--font);cursor:pointer;border:none;background:var(--accent);color:var(--ink);font-weight:900;font-size:11px;
+    letter-spacing:.15em;text-transform:uppercase;padding:12px 28px;border-radius:999px;transition:all .5s var(--ease)}
+  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(228,164,189,.5)}
+
+  main{max-width:1120px;margin:0 auto;padding:72px clamp(20px,5vw,56px) 0}
+  section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:all 1s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* PORTRAIT (grayscale → color) */
+  .portrait{filter:grayscale(100%);transition:filter 1s var(--ease),transform 1s var(--ease)}
+  .portrait svg{display:block;width:100%;height:100%}
+  .portrait.lit{filter:grayscale(0)}
+
+  /* HERO */
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+  @media(max-width:860px){.hero{grid-template-columns:1fr;gap:36px}}
+  .hero-eyebrow{margin-bottom:26px;color:rgba(38,38,38,.55)}
+  h1.head{font-weight:900;font-size:clamp(48px,9.5vw,120px);line-height:.86;letter-spacing:-.03em;text-transform:uppercase}
+  .hero p.body{margin:30px 0 6px;max-width:430px;font-size:16.5px;line-height:1.75;color:rgba(38,38,38,.72);font-weight:400}
+  .arrow-cta{display:inline-flex;align-items:center;gap:10px;margin-top:26px;cursor:pointer;background:none;border:none;
+    font-family:var(--font);font-weight:900;font-size:14px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink);
+    padding-bottom:6px;border-bottom:2px solid var(--accent);transition:gap .5s var(--ease)}
+  .arrow-cta:hover{gap:18px}
+  .hero-card{position:relative;background:var(--bg2);border-radius:24px;aspect-ratio:4/5;padding:7%;
+    display:flex;align-items:center;justify-content:center;overflow:hidden}
+  #heroFan{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;align-items:center;width:100%}
+  .hp{width:30%;aspect-ratio:1/1;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .hp .portrait{width:90%;height:90%}
+  .hp:hover .portrait{filter:grayscale(0);transform:scale(1.06)}
+  .badge{position:absolute;width:140px;height:140px;border-radius:50%;background:var(--accent);color:var(--ink);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;bottom:-26px;left:-26px;
+    box-shadow:0 18px 40px rgba(228,164,189,.45);animation:bounce-slow 4s ease-in-out infinite}
+  .badge .n{font-size:32px;font-weight:900;font-style:italic;line-height:1}
+  .badge .t{font-size:8px;font-weight:900;letter-spacing:.25em;text-transform:uppercase;margin-top:4px}
+  @keyframes bounce-slow{0%,100%{transform:translateY(-5%)}50%{transform:translateY(5%)}}
+
+  /* QUIZ */
+  #quiz section{justify-content:center}
+  .q-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px}
+  .q-count{font-size:10px;font-weight:900;letter-spacing:.3em;color:rgba(38,38,38,.45)}
+  .q-bartrack{height:2px;background:var(--line);margin-bottom:54px;position:relative}
+  .q-bar{position:absolute;inset:0 auto 0 0;height:2px;width:0;background:var(--accent);transition:width 1s var(--ease)}
+  .q-text{font-weight:800;font-size:clamp(26px,4.2vw,46px);line-height:1.08;letter-spacing:-.02em;max-width:18ch;margin-bottom:46px}
+  .opt{width:100%;cursor:pointer;background:none;border:none;border-top:1px solid var(--line);font-family:var(--font);text-align:left;color:var(--ink);
+    display:grid;grid-template-columns:54px 1fr 30px;align-items:center;gap:16px;padding:25px 14px;transition:all .6s var(--ease)}
+  .opts .opt:last-child{border-bottom:1px solid var(--line)}
+  .opt .onum{font-size:11px;font-weight:900;letter-spacing:.2em;color:var(--accent);transition:color .6s var(--ease)}
+  .opt .otext{font-size:clamp(16px,2vw,20px);font-weight:500;line-height:1.4}
+  .opt .oarr{font-size:18px;opacity:0;transform:translateX(-8px);transition:all .6s var(--ease);justify-self:end}
+  .opt:hover{background:var(--accent);padding-left:28px;padding-right:24px}
+  .opt:hover .onum{color:var(--ink)}
+  .opt:hover .oarr{opacity:1;transform:none}
+
+  /* RESULT */
+  #result{display:none}
+  #result.show{display:block}
+  .res-eyebrow{color:rgba(38,38,38,.5);margin-bottom:22px}
+  .res-top{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;margin-bottom:8px}
+  @media(max-width:860px){.res-top{grid-template-columns:1fr;gap:24px}}
+  .res-name{font-weight:900;font-size:clamp(52px,10vw,112px);line-height:.84;letter-spacing:-.03em;text-transform:uppercase}
+  .res-name .ko{display:block;font-size:clamp(28px,5vw,56px);margin-top:8px}
+  .res-tag{margin-top:22px;font-size:18px;font-weight:500;color:rgba(38,38,38,.7);max-width:34ch}
+  .res-card{position:relative;background:var(--bg2);border-radius:24px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:7%}
+  .res-card .portrait{width:82%;height:82%}
+  .res-card:hover .portrait{filter:grayscale(0);transform:scale(1.05)}
+
+  .sync{margin:44px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0}
+  .sync-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+  .sync-top .lab{font-size:10px;font-weight:900;letter-spacing:.3em;text-transform:uppercase;color:rgba(38,38,38,.55)}
+  .sync-top .pct{font-size:clamp(40px,7vw,72px);font-weight:900;font-style:italic;line-height:.8;letter-spacing:-.03em}
+  .sync-track{height:6px;background:var(--line);position:relative;border-radius:3px;overflow:hidden}
+  .sync-bar{position:absolute;inset:0 auto 0 0;height:6px;width:0;background:var(--accent);transition:width 1.2s var(--ease)}
+
+  .quote{font-size:clamp(20px,3.2vw,30px);font-weight:500;font-style:italic;line-height:1.4;letter-spacing:-.01em;max-width:26ch;margin:6px 0 44px}
+  .quote::before{content:"“";color:var(--accent)} .quote::after{content:"”";color:var(--accent)}
+
+  .tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:48px}
+  .tag{font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--ink);padding:8px 16px;border-radius:999px}
+
+  .block{margin-bottom:48px}
+  .block .klab{color:var(--accent);margin-bottom:14px;display:block}
+  .block h3{font-weight:900;font-size:clamp(24px,4.4vw,40px);line-height:1;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:18px}
+  .block p{font-size:16.5px;line-height:1.8;color:rgba(38,38,38,.8);max-width:62ch;font-weight:400}
+
+  /* mirror self-reflection */
+  .mirror{background:var(--ink);color:var(--bg);border-radius:22px;padding:38px clamp(26px,4vw,44px);margin-bottom:48px;position:relative;overflow:hidden}
+  .mirror .klab{color:var(--accent);display:block;margin-bottom:16px}
+  .mirror p{font-size:clamp(18px,2.6vw,23px);line-height:1.6;font-weight:500;max-width:44ch}
+  .mirror .big{position:absolute;right:-10px;top:-30px;font-size:160px;opacity:.06;font-weight:900;font-style:italic}
+
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:48px}
+  .duo .cell{background:var(--bg);padding:34px 30px}
+  .duo .cell .klab{display:block;margin-bottom:12px}
+  .duo .cell h4{font-weight:900;font-size:20px;text-transform:uppercase;letter-spacing:-.01em;margin-bottom:12px}
+  .duo .cell p{font-size:15.5px;line-height:1.75;color:rgba(38,38,38,.8);font-weight:400}
+  .duo .good .klab{color:var(--accent)}
+  @media(max-width:640px){.duo{grid-template-columns:1fr}}
+
+  .tip{background:var(--bg2);border-radius:18px;padding:32px 34px;margin-bottom:48px}
+  .tip .klab{color:var(--accent);display:block;margin-bottom:12px}
+  .tip p{font-size:17px;font-weight:500;line-height:1.65}
+
+  .kemi{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px}
+  @media(max-width:640px){.kemi{grid-template-columns:1fr}}
+  .kcard{border:1px solid var(--line);border-radius:20px;padding:28px;transition:all .8s var(--ease)}
+  .kcard:hover{background:var(--bg2)}
+  .kcard .khead{font-size:10px;font-weight:900;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+  .kcard .kbody{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+  .kmini{width:64px;height:64px;flex:0 0 auto;background:var(--bg2);border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .kcard:hover .kmini{background:#fff}
+  .kmini .portrait{width:92%;height:92%}
+  .kcard:hover .portrait{filter:grayscale(0);transform:scale(1.05)}
+  .kcard .kname{font-weight:900;font-size:28px;text-transform:uppercase;letter-spacing:-.02em;line-height:.9}
+  .kcard .kname span{display:block;font-size:14px;color:rgba(38,38,38,.55);margin-top:4px}
+  .kcard .kwhy{font-size:15px;line-height:1.7;color:rgba(38,38,38,.8);font-weight:400}
+
+  .runner{border-top:1px solid var(--line);padding-top:26px;margin-bottom:50px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .runner .klab{color:rgba(38,38,38,.45)}
+  .runner .rname{font-weight:900;font-size:26px;text-transform:uppercase;letter-spacing:-.02em;display:flex;align-items:center;gap:12px}
+  .runner .rmini{width:44px;height:44px;border-radius:10px;background:var(--bg2);overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .runner .rmini .portrait{width:92%;height:92%;filter:grayscale(0)}
+
+  .res-actions{display:flex;gap:16px;flex-wrap:wrap}
+  .pill{font-family:var(--font);cursor:pointer;font-weight:900;font-size:12px;letter-spacing:.15em;text-transform:uppercase;padding:18px 36px;border-radius:999px;transition:all .5s var(--ease)}
+  .pill.solid{background:var(--accent);color:var(--ink);border:1px solid var(--accent)}
+  .pill.solid:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(228,164,189,.5)}
+  .pill.ghost{background:none;color:var(--ink);border:1px solid var(--ink)}
+  .pill.ghost:hover{background:var(--ink);color:var(--bg)}
+
+  footer{background:var(--bg2);margin-top:40px;padding:60px clamp(20px,5vw,56px)}
+  .foot-in{max-width:1120px;margin:0 auto}
+  .foot-top{display:grid;grid-template-columns:5fr 7fr;gap:40px;padding-bottom:40px;border-bottom:1px solid var(--line)}
+  @media(max-width:760px){.foot-top{grid-template-columns:1fr;gap:32px}}
+  .foot-brand{font-weight:900;font-size:30px;text-transform:uppercase;letter-spacing:-.02em}
+  .foot-brand b{color:var(--accent)}
+  .foot-mission{margin-top:14px;font-size:14px;line-height:1.7;color:rgba(38,38,38,.6);max-width:36ch;font-weight:400}
+  .foot-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media(max-width:520px){.foot-cols{grid-template-columns:1fr 1fr}}
+  .foot-h{font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);padding-bottom:6px;margin-bottom:14px;border-bottom:1px solid var(--line);display:inline-block}
+  .foot-cols a,.foot-cols span{display:block;font-size:13px;color:rgba(38,38,38,.65);margin-bottom:8px;text-decoration:none;font-weight:400;transition:color .4s var(--ease)}
+  .foot-cols a:hover{color:var(--accent)}
+  .foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:24px}
+  .foot-bottom *{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(38,38,38,.3);text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">PRINCESS<b>.</b></div>
+  <div class="nav-mid">DISNEY · LOVE ARCHETYPE</div>
+  <button class="nav-cta" id="navCta" onclick="start()">테스트 시작</button>
+</nav>
+
+<main>
+  <!-- INTRO -->
+  <section id="intro">
+    <div class="hero">
+      <div>
+        <div class="util hero-eyebrow reveal">단 7개의 질문 · 숨겨진 나의 연애 본능</div>
+        <h1 class="head reveal">사랑에 빠진<br>나는, 어떤<br><span class="ital">princess</span>?</h1>
+        <p class="body reveal">썸의 직감, 답장 없는 6시간의 인내심, 갈등 앞에서의 태도까지. 7개의 질문이 당신도 몰랐던 연애 본능을 다섯 공주의 캐릭터로 들춰냅니다. 당신의 사랑은 어떤 모양일까요?</p>
+        <button class="arrow-cta reveal" onclick="start()">테스트 시작하기 <span>→</span></button>
+      </div>
+      <div class="hero-card reveal">
+        <div id="heroFan"></div>
+        <div class="badge"><div class="n">5</div><div class="t">Princess</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <div id="quiz" style="display:none">
+    <section>
+      <div class="q-head">
+        <span class="util accent" id="qLabel">QUESTION 01</span>
+        <span class="q-count" id="qCount">01 / 07</span>
+      </div>
+      <div class="q-bartrack"><div class="q-bar" id="qBar"></div></div>
+      <div id="qBody"></div>
+    </section>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result"></div>
+</main>
+
+<footer>
+  <div class="foot-in">
+    <div class="foot-top">
+      <div>
+        <div class="foot-brand">PRINCESS<b>.</b></div>
+        <p class="foot-mission">연애하는 방식으로 알아보는 나의 디즈니 공주 아키타입. 재미로 보는 심리테스트입니다.</p>
+      </div>
+      <div class="foot-cols">
+        <div><div class="foot-h">Test</div><a href="#" onclick="start();return false">다시 하기</a><a href="#intro">처음으로</a></div>
+        <div><div class="foot-h">Princess</div><span>Cinderella</span><span>Belle</span><span>Moana</span><span>Rapunzel</span><span>Jasmine</span></div>
+        <div><div class="foot-h">Made by</div><span>ddeundi</span><span>Claude Code</span><span>2026</span></div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 PRINCESS LOVE TEST. ALL FOR FUN.</span>
+      <span>DESIGN — SUPER TRAVEL SYSTEM</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== 공주별 오리지널 일러스트 (저작권 없는 직접 제작 SVG) ===== */
+const SVG = {
+  cinderella:`<svg viewBox='0 0 240 280' xmlns='http://www.w3.org/2000/svg'>
+    <path d='M55 280 Q60 205 120 198 Q180 205 185 280 Z' fill='#bfe0ff'/>
+    <path d='M120 198 L102 232 L120 252 L138 232 Z' fill='#a6d4fb'/>
+    <rect x='109' y='158' width='22' height='26' rx='8' fill='#f1d2bd'/>
+    <path d='M70 120 Q70 50 120 48 Q170 50 170 120 Q170 150 150 165 L90 165 Q70 150 70 120Z' fill='#f2d98e'/>
+    <ellipse cx='120' cy='118' rx='44' ry='52' fill='#f1d2bd'/>
+    <path d='M76 110 Q80 60 120 58 Q160 60 164 110 Q150 86 120 84 Q90 86 76 110Z' fill='#f7e3a0'/>
+    <circle cx='120' cy='52' r='15' fill='#f2d98e'/>
+    <path d='M99 70 L109 58 L120 67 L131 58 L141 70 Z' fill='#e4a4bd'/>
+    <path d='M104 120 q6 -7 12 0' stroke='#5b4636' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <path d='M124 120 q6 -7 12 0' stroke='#5b4636' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <circle cx='100' cy='136' r='6' fill='#f4a9c0' opacity='.6'/><circle cx='140' cy='136' r='6' fill='#f4a9c0' opacity='.6'/>
+    <path d='M114 144 q6 6 12 0' stroke='#d9748f' stroke-width='3' fill='none' stroke-linecap='round'/>
+  </svg>`,
+  belle:`<svg viewBox='0 0 240 280' xmlns='http://www.w3.org/2000/svg'>
+    <path d='M55 280 Q60 205 120 198 Q180 205 185 280 Z' fill='#f4c84a'/>
+    <path d='M120 198 L104 232 L120 250 L136 232 Z' fill='#e7b62f'/>
+    <rect x='109' y='158' width='22' height='26' rx='8' fill='#f1d2bd'/>
+    <path d='M72 118 Q70 52 120 50 Q172 52 168 120 Q168 150 150 164 L150 130 Q120 150 90 130 L90 164 Q72 150 72 118Z' fill='#8a5a2b'/>
+    <path d='M158 96 Q198 122 188 192 Q176 212 162 188 Q178 150 150 120Z' fill='#7a4d24'/>
+    <ellipse cx='120' cy='118' rx='44' ry='52' fill='#f1d2bd'/>
+    <path d='M76 112 Q78 64 120 60 Q162 64 164 112 Q150 88 132 92 Q120 80 108 92 Q90 88 76 112Z' fill='#9a6630'/>
+    <circle cx='158' cy='98' r='6' fill='#e4a4bd'/>
+    <path d='M104 120 q6 -7 12 0' stroke='#5b4636' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <path d='M124 120 q6 -7 12 0' stroke='#5b4636' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <circle cx='100' cy='136' r='6' fill='#f4a9c0' opacity='.6'/><circle cx='140' cy='136' r='6' fill='#f4a9c0' opacity='.6'/>
+    <path d='M114 144 q6 6 12 0' stroke='#d9748f' stroke-width='3' fill='none' stroke-linecap='round'/>
+  </svg>`,
+  moana:`<svg viewBox='0 0 240 280' xmlns='http://www.w3.org/2000/svg'>
+    <path d='M64 110 Q60 50 120 48 Q180 50 176 110 Q190 180 168 274 Q156 250 156 200 Q150 244 150 280 L90 280 Q90 244 84 200 Q84 250 72 274 Q50 180 64 110Z' fill='#2e2a28'/>
+    <path d='M70 280 Q74 210 120 204 Q166 210 170 280 Z' fill='#2bb6a8'/>
+    <rect x='109' y='160' width='22' height='26' rx='8' fill='#c98a5e'/>
+    <ellipse cx='120' cy='120' rx='44' ry='52' fill='#c98a5e'/>
+    <path d='M74 116 Q76 62 120 58 Q164 62 166 116 Q150 88 120 86 Q90 88 74 116Z' fill='#3a3431'/>
+    <g transform='translate(160 94)'><circle r='6' cx='0' cy='-7' fill='#ef6f6f'/><circle r='6' cx='7' cy='2' fill='#ef6f6f'/><circle r='6' cx='-7' cy='2' fill='#ef6f6f'/><circle r='6' cx='4' cy='9' fill='#ef6f6f'/><circle r='6' cx='-4' cy='9' fill='#ef6f6f'/><circle r='4' fill='#f4c84a'/></g>
+    <path d='M104 122 q6 -7 12 0' stroke='#3a2c22' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <path d='M124 122 q6 -7 12 0' stroke='#3a2c22' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <circle cx='100' cy='138' r='6' fill='#e07a6a' opacity='.5'/><circle cx='140' cy='138' r='6' fill='#e07a6a' opacity='.5'/>
+    <path d='M114 146 q6 6 12 0' stroke='#b05a4a' stroke-width='3' fill='none' stroke-linecap='round'/>
+  </svg>`,
+  rapunzel:`<svg viewBox='0 0 240 280' xmlns='http://www.w3.org/2000/svg'>
+    <path d='M60 110 Q56 48 120 46 Q184 48 180 110 Q200 200 176 280 L150 280 Q160 200 150 150 Q120 168 90 150 Q80 200 90 280 L64 280 Q40 200 60 110Z' fill='#f4d35e'/>
+    <path d='M72 280 Q76 212 120 206 Q164 212 168 280 Z' fill='#b58bd6'/>
+    <rect x='109' y='160' width='22' height='26' rx='8' fill='#f1d2bd'/>
+    <ellipse cx='120' cy='118' rx='44' ry='52' fill='#f1d2bd'/>
+    <path d='M74 112 Q76 60 120 56 Q164 60 166 112 Q148 86 120 84 Q92 86 74 112Z' fill='#f7dd72'/>
+    <g transform='translate(92 74)' fill='#e4a4bd'><circle r='3.5' cx='0' cy='-4'/><circle r='3.5' cx='4' cy='1'/><circle r='3.5' cx='-4' cy='1'/><circle r='3.5' cx='2' cy='5'/><circle r='3.5' cx='-2' cy='5'/><circle r='2' fill='#fff'/></g>
+    <g transform='translate(148 74)' fill='#9fd2ff'><circle r='3.5' cx='0' cy='-4'/><circle r='3.5' cx='4' cy='1'/><circle r='3.5' cx='-4' cy='1'/><circle r='3.5' cx='2' cy='5'/><circle r='3.5' cx='-2' cy='5'/><circle r='2' fill='#fff'/></g>
+    <path d='M104 120 q6 -7 12 0' stroke='#5b4636' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <path d='M124 120 q6 -7 12 0' stroke='#5b4636' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <circle cx='100' cy='136' r='6' fill='#f4a9c0' opacity='.6'/><circle cx='140' cy='136' r='6' fill='#f4a9c0' opacity='.6'/>
+    <path d='M114 144 q6 6 12 0' stroke='#d9748f' stroke-width='3' fill='none' stroke-linecap='round'/>
+  </svg>`,
+  jasmine:`<svg viewBox='0 0 240 280' xmlns='http://www.w3.org/2000/svg'>
+    <path d='M66 116 Q62 50 120 48 Q178 50 174 116 Q186 170 170 214 Q160 182 156 150 Q150 178 150 214 L90 214 Q90 178 84 150 Q80 182 70 214 Q54 170 66 116Z' fill='#1c1a1f'/>
+    <path d='M74 280 Q78 206 120 200 Q162 206 166 280 Z' fill='#1fb3b0'/>
+    <rect x='109' y='160' width='22' height='26' rx='8' fill='#d9a06b'/>
+    <ellipse cx='120' cy='118' rx='44' ry='52' fill='#d9a06b'/>
+    <path d='M74 110 Q78 60 120 56 Q162 60 166 110 Q150 84 120 82 Q90 84 74 110Z' fill='#2a262d'/>
+    <path d='M80 78 Q120 66 160 78' stroke='#e8c66b' stroke-width='5' fill='none'/>
+    <circle cx='120' cy='72' r='5' fill='#e4a4bd'/>
+    <circle cx='76' cy='142' r='5' fill='#e8c66b'/><circle cx='164' cy='142' r='5' fill='#e8c66b'/>
+    <path d='M104 120 q6 -7 12 0' stroke='#3a2c22' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <path d='M124 120 q6 -7 12 0' stroke='#3a2c22' stroke-width='3' fill='none' stroke-linecap='round'/>
+    <circle cx='100' cy='136' r='6' fill='#e07a6a' opacity='.45'/><circle cx='140' cy='136' r='6' fill='#e07a6a' opacity='.45'/>
+    <path d='M114 144 q6 6 12 0' stroke='#b05a4a' stroke-width='3' fill='none' stroke-linecap='round'/>
+  </svg>`
+};
+
+/* ===== 공주 데이터 ===== */
+const P = {
+  cinderella:{
+    emoji:"👠", label:"CINDERELLA", name:"신데렐라", svg:SVG.cinderella,
+    tag:"운명을 믿는 순정 로맨티스트",
+    quote:"꿈은 마음이 바라는 소원이에요 — 진짜 인연은 언젠가 온다고 믿어요.",
+    traits:["진심","인내심","낭만","한결같음"],
+    why:"한번 마음을 주면 끝까지 진심인 당신. 작은 약속도 소중히 지키고, 힘든 순간에도 상대를 원망하기보다 다정함을 잃지 않아요. 화려한 고백이나 이벤트보다 '변하지 않는 행동'으로 사랑을 증명하는 사람이라, 시간이 지날수록 상대에게 더 깊은 신뢰를 받아요. 자정의 종이 울려도 유리구두를 남기고 돌아서는, 운명 같은 사랑을 믿는 진짜 로맨티스트예요.",
+    mirror:"혹시 늘 '내가 더 좋아하는 쪽'이라서, 서운함을 삼키며 맞춰주고만 있진 않나요? 당신의 다정함은 그 자체로 충분히 빛나요. 가끔은 사랑을 '주는 자리'가 아니라 '받는 자리'에 서 봐도 괜찮아요.",
+    strength:"한번 마음먹으면 끝까지 가는 진심과 인내심이 가장 큰 무기예요. 상대가 흔들릴 때 곁을 지키는 한결같음 덕분에, 당신과 함께면 '이 사람은 진짜구나' 하는 안정감을 느끼게 돼요. 말보다 행동으로 보여주는 사랑이라 신뢰가 오래갑니다.",
+    caution:"문제는 상대를 배려하다 내 감정과 서운함을 자꾸 뒤로 미룬다는 거예요. '괜찮아'를 반복하다 보면 어느 날 쌓인 마음이 한꺼번에 무너질 수 있어요. 참는 게 배려가 아니라, 솔직하게 말하는 것도 사랑의 일부라는 걸 기억하세요.",
+    desc:"당신에게 필요한 건 '기다림'을 '표현'으로 바꾸는 연습이에요. 좋아하는 마음이 들면 운명을 기다리기만 하지 말고, 먼저 약속을 제안하거나 작은 호감을 슬쩍 내비쳐 보세요. 진심은 이미 충분하니, 그 진심이 상대에게 닿도록 한 발짝만 먼저 내디디면 당신의 동화는 훨씬 빨리 시작될 거예요.",
+    best:"rapunzel", bestWhy:"당신의 깊은 진심에 라푼젤의 설렘과 에너지가 더해지면, 평범한 하루도 매일 동화가 돼요.",
+    worst:"moana", worstWhy:"늘 함께이길 바라는 당신과 거리를 중시하는 독립파 사이엔 애정 표현의 온도 차가 생길 수 있어요.",
+    tip:"좋아하는 사람에겐 '기다림'보다 '작은 표현' 한 번이 관계를 훨씬 빨리 데워줘요."
+  },
+  belle:{
+    emoji:"📖", label:"BELLE", name:"벨", svg:SVG.belle,
+    tag:"내면을 읽는 사려 깊은 탐구가",
+    quote:"겉모습이 다가 아니야 — 사람의 진짜 가치는 안에 있다고 믿어요.",
+    traits:["통찰","대화","경청","진정성"],
+    why:"외모나 분위기보다 '이 사람이 어떤 사람인지'를 먼저 보는 당신. 깊은 대화로 천천히 마음을 열고, 남들이 놓친 상대의 진짜 매력을 알아봐요. 분위기에 휩쓸리지 않고 본질을 보는 안목 덕분에, 빠르게 타오르는 불꽃보다 오래 함께 성장하는 관계를 만들어요. 야수 속의 왕자를 알아본 벨처럼, 사려 깊고 통찰력 있는 사람이에요.",
+    mirror:"사랑을 '이해해야 할 문제'처럼 신중하게 분석하고 있진 않나요? 어떤 마음은 머리로 풀기보다 그냥 느끼는 게 정답일 때가 있어요. 당신의 신중함은 좋은 안목이지만, 가끔은 '확신'보다 '설렘'을 먼저 믿어봐도 좋아요.",
+    strength:"사람의 겉이 아닌 속을 읽는 통찰력과, 상대의 이야기를 진심으로 듣는 경청 능력이 빛나요. 당신과 대화하면 누구나 '내 마음을 알아주는구나' 느끼죠. 남들이 지나친 좋은 사람을 알아보는 안목까지 갖춰, 관계의 깊이를 만드는 데 누구보다 강해요.",
+    caution:"단, 모든 걸 머리로 분석하다 마음이 늦게 열리는 게 약점이에요. '이 사람 정말 괜찮을까' 재고 또 재다가 정작 설렘의 타이밍을 놓치기도 하죠. 가끔은 분석을 멈추고 '그냥 좋다'는 감정을 믿어도 괜찮아요.",
+    desc:"당신에게 필요한 건 '관찰자'에서 '참여자'로 넘어가는 용기예요. 마음에 드는 사람이 있다면 멀리서 파악만 하지 말고, 먼저 가벼운 질문 하나를 던져 대화의 문을 열어 보세요. 깊은 대화는 당신의 특기니까, 그 문만 열면 누구보다 단단하고 풍성한 관계를 만들 수 있어요.",
+    best:"jasmine", bestWhy:"솔직하고 당당한 자스민과는 눈치 볼 것 없이 대화가 끝없이 통하는 환상의 조합이에요.",
+    worst:"rapunzel", worstWhy:"신중하게 재는 당신과 즉흥적으로 돌진하는 타입은 연애 속도가 안 맞아 답답할 수 있어요.",
+    tip:"마음에 들면 '관찰'만 하지 말고, 먼저 한 가지 질문을 던져 대화를 시작해 보세요."
+  },
+  moana:{
+    emoji:"🌊", label:"MOANA", name:"모아나", svg:SVG.moana,
+    tag:"나의 항해가 먼저인 독립가",
+    quote:"나는 내 길을 알아 — 연애는 인생의 전부가 아니라 멋진 동행이에요.",
+    traits:["주체성","독립","자존감","쿨함"],
+    why:"내 꿈과 길이 분명한 당신. 누가 정해주지 않아도 스스로 항해하고, 연애 때문에 나를 잃지 않아요. 상대에게 기대기보다 나란히 나아가려 하기에, 서로를 구속하지 않는 동등하고 건강한 관계를 만드는 데 누구보다 능숙해요. 혼자서도 충분히 빛나는, 멋지고 단단한 사람이에요.",
+    mirror:"혹시 상처받는 게 두려워서, 마음을 다 주기 전에 미리 거리를 두고 있진 않나요? 단단한 당신도 누군가에게 기댄다고 무너지지 않아요. 진짜 용기는 혼자 버티는 게 아니라, 곁을 내어주는 것일지도 몰라요.",
+    strength:"연애 때문에 나를 잃지 않는 단단한 자존감과 독립심이 큰 매력이에요. 매달리지 않고 내 삶을 사는 모습 자체가 멋지게 보이죠. 상대와 함께 나아가려는 태도 덕분에, 서로를 존중하는 어른스러운 관계를 만들어요.",
+    caution:"다만 '쿨함'이 지나치면 상대가 '내가 덜 중요한가?' 하고 외로움을 느낄 수 있어요. 마음은 분명히 있는데 표현을 아끼다 오해를 사기도 하죠. 독립과 무관심은 다르다는 걸 기억하고, 애정은 가끔 말로 꺼내 주세요.",
+    desc:"당신에게 필요한 건 '내 세계'에 상대를 초대하는 연습이에요. 혼자서도 빛나는 사람이지만, 그 항해에 누군가를 태워주는 순간 사랑은 한층 깊어져요. '바빴지만 네 생각 났어' 같은 짧은 한마디가, 당신의 진심을 전하는 가장 강력한 신호가 될 거예요.",
+    best:"jasmine", bestWhy:"둘 다 주체적이라 서로의 자유를 존중하는, 군더더기 없이 건강한 관계가 돼요.",
+    worst:"cinderella", worstWhy:"늘 함께이길 바라는 타입과는 적절한 거리에 대한 감각이 달라 서운함이 쌓일 수 있어요.",
+    tip:"독립과 무관심은 달라요. '바빠도 너 생각했어' 한마디가 관계를 지켜줘요."
+  },
+  rapunzel:{
+    emoji:"🎨", label:"RAPUNZEL", name:"라푼젤", svg:SVG.rapunzel,
+    tag:"매일이 모험인 열정 가득형",
+    quote:"드디어 세상 밖으로! — 당신과 함께면 평범한 하루도 모험이 돼요.",
+    traits:["호기심","표현력","에너지","순수함"],
+    why:"마음이 가면 숨기지 않고 표현하는 당신. 새로운 경험에 늘 두근거리고, 함께라면 별것 아닌 일상도 특별한 추억으로 만들어요. 상대는 당신 덕분에 한 번도 못 가본 세상을 경험하게 되죠. 탑을 박차고 나온 라푼젤처럼, 세상과 사랑을 향한 설렘이 가득한 사랑스러운 사람이에요.",
+    mirror:"새로운 설렘을 좇느라, 지금 곁에 있는 익숙한 행복을 당연하게 여기고 있진 않나요? 모험만큼이나 '머무름'에도 용기가 필요해요. 가장 큰 모험은, 한 사람과 오래 깊어지는 것일 수도 있어요.",
+    strength:"감정을 솔직하게 표현하는 용기와, 평범한 일상도 특별하게 만드는 에너지가 매력이에요. 당신과 함께면 데이트가 늘 모험이 되고, 상대는 지루할 틈이 없죠. 호기심과 순수함이 관계에 끊임없이 생기를 불어넣어요.",
+    caution:"단, 설렘이 앞서 상대의 속도나 감정을 놓칠 때가 있어요. 내 텐션을 100% 쏟다 보면 상대가 따라오기 버거워할 수도 있죠. 가끔은 한 박자 멈춰 '지금 상대의 마음은 어떨까' 살피면, 그 설렘이 훨씬 오래갑니다.",
+    desc:"당신에게 필요한 건 '쏟아내기'와 '바라보기'의 균형이에요. 마음을 표현하는 건 당신의 큰 장점이니 그대로 두되, 표현한 뒤엔 상대의 반응을 기다려 주는 여유를 더해 보세요. 그러면 당신의 빛나는 에너지가 부담이 아니라, 누구나 받고 싶은 선물로 전해질 거예요.",
+    best:"cinderella", bestWhy:"당신의 설렘과 신데렐라의 진심이 만나면, 가장 따뜻하고 오래가는 동화가 완성돼요.",
+    worst:"belle", worstWhy:"즉흥적인 당신과 신중하게 재는 타입은 연애 템포 차이로 서로 답답해질 수 있어요.",
+    tip:"감정을 쏟기 전에 '상대는 지금 어때?' 한 번 살피면 설렘이 더 오래가요."
+  },
+  jasmine:{
+    emoji:"🪄", label:"JASMINE", name:"자스민", svg:SVG.jasmine,
+    tag:"당당하고 솔직한 자유로운 영혼",
+    quote:"나는 누가 정해주는 사람이 아니야 — 사랑도 동등하고 솔직해야죠.",
+    traits:["솔직함","당당함","평등","자유"],
+    why:"자신의 마음에 솔직하고, 관계에서 동등함과 자유를 무엇보다 중요하게 여기는 당신. 화려한 조건이나 남들의 시선보다 진짜 마음과 서로의 존중을 봐요. 할 말은 분명히 하고 휘둘리지 않기에, 건강하지 않은 관계는 단호하게 거를 줄 알죠. 자기 기준이 뚜렷한, 멋지고 주체적인 사람이에요.",
+    mirror:"강해 보이려 애쓰느라, 약한 모습을 보이는 걸 두려워하고 있진 않나요? 솔직함의 진짜 끝은, 내 여린 마음과 서툰 부분까지 보여주는 용기예요. 당당함 안에 숨은 그 여림을 보여줄 때, 사랑은 더 가까워져요.",
+    strength:"자기 마음에 솔직하고 관계에서 동등함을 지킬 줄 아는 당당함이 매력이에요. 눈치 게임이 없어서 상대가 오히려 편안해하죠. 자기 기준이 분명해 휘둘리지 않고, 건강하지 않은 관계는 과감히 정리할 줄 아는 단단함도 갖췄어요.",
+    caution:"다만 솔직함이 가끔 상대에겐 날카롭게 들릴 수 있어요. 맞는 말이어도 표현이 직설적이면 상처가 되기도 하죠. '솔직함' 위에 '다정함' 한 스푼을 얹으면, 당신의 진심이 훨씬 부드럽게 가닿아요.",
+    desc:"당신에게 도움이 되는 건 '맞다/틀리다'를 잠시 내려놓고 상대의 마음을 먼저 들여다보는 연습이에요. '그건 좀 별로였어' 뒤에 '그래도 네가 좋아'를 붙이는 것만으로 관계의 온도가 달라져요. 당신의 당당함에 따뜻함이 더해지면, 누구보다 자유롭고 단단한 사랑을 하게 될 거예요.",
+    best:"belle", bestWhy:"깊이 있는 벨과는 가식 없이 솔직한 대화가 끝없이 통하는 최고의 조합이에요.",
+    worst:"cinderella", worstWhy:"직설적인 당신과 참고 기다리는 타입은 표현 방식이 달라 서로 답답해질 수 있어요.",
+    tip:"\"그건 좀 별로였어\" 뒤에 \"그래도 네가 좋아\"를 붙이면 관계가 훨씬 부드러워져요."
+  }
+};
+
+/* ===== 질문 (생생한 연애 상황극 7문항) ===== */
+const Q = [
+  { q:"썸 타던 사람에게서 밤 11시에 “자?” 카톡이 왔다. 나의 반응은?",
+    opts:[
+      {t:"어떤 의미일까 궁금해서 자연스럽게 대화를 이어간다", s:{belle:2}},
+      {t:"마침 안 자고 있었네, 쿨하게 “ㄴㄴ 왜?” 한마디", s:{moana:2}},
+      {t:"심장 쿵! 신나서 답장하고 약속까지 잡아버린다", s:{rapunzel:2, cinderella:1}},
+      {t:"“안 자~ 근데 무슨 일?” 솔직하게 본론부터 물어본다", s:{jasmine:2}},
+    ]},
+  { q:"좋아하는 사람이 답장을 6시간째 안 한다. 그동안 나는?",
+    opts:[
+      {t:"무슨 일 있나 걱정되어 자꾸 휴대폰을 본다", s:{cinderella:2}},
+      {t:"바쁜가 보다 하고 내 하루를 그냥 즐긴다", s:{moana:2}},
+      {t:"궁금함을 못 참고 먼저 재밌는 짤을 보낸다", s:{rapunzel:2}},
+      {t:"“답장 늦네?” 하고 솔직하게 물어본다", s:{jasmine:2}},
+    ]},
+  { q:"이번 데이트 장소를 내가 정하기로 했다. 어디로?",
+    opts:[
+      {t:"야경이 예쁜 분위기 좋은 레스토랑", s:{cinderella:2}},
+      {t:"조용한 독립서점과 감성 카페", s:{belle:2}},
+      {t:"팝업·전시·놀이공원 같은 신나는 곳", s:{rapunzel:2}},
+      {t:"남들 잘 안 가본 색다른 핫플", s:{jasmine:2, moana:1}},
+    ]},
+  { q:"연인이 친구들 앞에서 나를 살짝 놀렸다. 그 순간 나는?",
+    opts:[
+      {t:"분위기 깨기 싫어 웃어넘기고, 나중에 살짝 말한다", s:{cinderella:2}},
+      {t:"그 자리는 넘기고 둘이 있을 때 차분히 대화한다", s:{belle:2}},
+      {t:"크게 신경 쓰지 않고 그냥 넘긴다", s:{moana:2}},
+      {t:"그 자리에서 바로 “그건 좀 아니지~” 당당하게", s:{jasmine:2}},
+    ]},
+  { q:"연애할 때 ‘이것만은 진짜 못 참아!’ 하는 건?",
+    opts:[
+      {t:"진심도 성의도 없이 대충 대할 때", s:{cinderella:2}},
+      {t:"대화가 안 통하고 깊이가 없을 때", s:{belle:2}},
+      {t:"나를 구속하고 내 시간을 뺏을 때", s:{moana:2}},
+      {t:"매일이 똑같고 설렘 없이 지루할 때", s:{rapunzel:2}},
+    ]},
+  { q:"친구가 “너 그 사람이랑 좀 안 맞는 것 같아”라고 한다. 나는?",
+    opts:[
+      {t:"친구 말도 참고해서 곰곰이 다시 생각해 본다", s:{belle:2}},
+      {t:"내가 판단할 일이지, 하고 흔들리지 않는다", s:{moana:2, jasmine:1}},
+      {t:"더 부딪혀보고 내가 직접 느껴보겠다", s:{rapunzel:2}},
+      {t:"“왜 그렇게 생각해?” 솔직히 듣고 내 소신대로", s:{jasmine:2}},
+    ]},
+  { q:"내가 꿈꾸는 ‘완벽한 연애의 결말’은?",
+    opts:[
+      {t:"변치 않고 평생 가는, 운명 같은 사랑", s:{cinderella:2}},
+      {t:"각자 빛나며 서로를 응원하는 든든한 동반자", s:{moana:2}},
+      {t:"평생 함께 모험하며 늘 설레는 사이", s:{rapunzel:2}},
+      {t:"끝까지 솔직하고 동등한, 자유로운 사랑", s:{jasmine:2, belle:1}},
+    ]},
+];
+
+const ORDER = ["cinderella","belle","moana","rapunzel","jasmine"];
+const pad=n=>String(n).padStart(2,"0");
+let idx=0, scores={};
+const $=id=>document.getElementById(id);
+
+function start(){
+  idx=0; scores={cinderella:0,belle:0,moana:0,rapunzel:0,jasmine:0};
+  $("intro").style.display="none";
+  $("result").classList.remove("show");
+  $("navCta").textContent="진행 중";
+  $("quiz").style.display="block";
+  render();
+}
+
+function render(){
+  const item=Q[idx];
+  $("qLabel").textContent="QUESTION "+pad(idx+1);
+  $("qCount").textContent=pad(idx+1)+" / "+pad(Q.length);
+  $("qBar").style.width=(idx/Q.length*100)+"%";
+  let h='<div class="q-text reveal">'+item.q+'</div><div class="opts">';
+  item.opts.forEach((o,i)=>{
+    h+='<button class="opt reveal" onclick="choose('+i+')"><span class="onum">'+pad(i+1)+'</span><span class="otext">'+o.t+'</span><span class="oarr">→</span></button>';
+  });
+  h+='</div>';
+  $("qBody").innerHTML=h;
+  observeReveals();
+  requestAnimationFrame(()=>$("qBody").querySelectorAll(".reveal").forEach(e=>e.classList.add("in")));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function choose(i){
+  const s=Q[idx].opts[i].s;
+  for(const k in s) scores[k]+=s[k];
+  idx++;
+  if(idx<Q.length){ render(); }
+  else { $("qBar").style.width="100%"; showResult(); }
+}
+
+function ranked(){
+  return ORDER.slice().map(k=>({key:k,score:scores[k]}))
+    .sort((a,b)=> b.score-a.score || ORDER.indexOf(a.key)-ORDER.indexOf(b.key));
+}
+
+function showResult(){
+  const rank=ranked();
+  const key=rank[0].key, runnerKey=rank[1].key;
+  const p=P[key], runner=P[runnerKey];
+  const sync=Math.min(99, Math.round(rank[0].score/(Q.length*2)*100));
+  const bestP=P[p.best], worstP=P[p.worst];
+  $("quiz").style.display="none";
+  $("navCta").textContent="다시 시작";
+  const r=$("result");
+  r.innerHTML=`
+    <section>
+      <div class="util res-eyebrow reveal">YOUR LOVE PRINCESS — RESULT</div>
+      <div class="res-top">
+        <div>
+          <div class="res-name reveal">${p.label}<span class="ko">${p.name}</span></div>
+          <p class="res-tag reveal">${p.tag}</p>
+        </div>
+        <div class="res-card reveal"><div class="portrait" id="mainPortrait">${p.svg}</div></div>
+      </div>
+
+      <div class="sync reveal">
+        <div class="sync-top"><span class="lab">${p.name} 싱크로율</span><span class="pct">${sync}%</span></div>
+        <div class="sync-track"><div class="sync-bar" data-w="${sync}"></div></div>
+      </div>
+
+      <div class="quote reveal">${p.quote}</div>
+      <div class="tags reveal">${p.traits.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+
+      <div class="block reveal">
+        <span class="util klab">Why this princess</span>
+        <h3>왜 ${p.name}인가요?</h3>
+        <p>${p.why}</p>
+      </div>
+
+      <div class="mirror reveal">
+        <span class="big">?</span>
+        <span class="util klab">Mirror, Mirror · 스스로에게</span>
+        <p>${p.mirror}</p>
+      </div>
+
+      <div class="duo reveal">
+        <div class="cell good"><span class="util klab">Strength</span><h4>나의 연애 강점</h4><p>${p.strength}</p></div>
+        <div class="cell"><span class="util klab">Caution</span><h4>살짝 주의할 점</h4><p>${p.caution}</p></div>
+      </div>
+
+      <div class="block reveal">
+        <span class="util klab">Prescription</span>
+        <h3>나를 위한 연애 처방</h3>
+        <p>${p.desc}</p>
+      </div>
+
+      <div class="tip reveal"><span class="util klab">💡 One-line Love Tip</span><p>${p.tip}</p></div>
+
+      <div class="kemi reveal">
+        <div class="kcard">
+          <div class="khead">💞 Perfect Match · 찰떡 케미</div>
+          <div class="kbody"><span class="kmini"><span class="portrait">${bestP.svg}</span></span><span class="kname">${bestP.label}<span>${bestP.name}</span></span></div>
+          <p class="kwhy">${p.bestWhy}</p>
+        </div>
+        <div class="kcard">
+          <div class="khead">⚡ Tough Match · 환장 케미</div>
+          <div class="kbody"><span class="kmini"><span class="portrait">${worstP.svg}</span></span><span class="kname">${worstP.label}<span>${worstP.name}</span></span></div>
+          <p class="kwhy">${p.worstWhy}</p>
+        </div>
+      </div>
+
+      <div class="runner reveal">
+        <span class="util klab">Runner-up · 버금가는 또 다른 나</span>
+        <span class="rname"><span class="rmini"><span class="portrait">${runner.svg}</span></span>${runner.name}</span>
+      </div>
+
+      <div class="res-actions reveal">
+        <button class="pill ghost" onclick="copyResult('${p.name}','${p.tag}',${sync})">결과 공유 ↗</button>
+        <button class="pill solid" onclick="start()">다시 하기 ↺</button>
+      </div>
+    </section>`;
+  r.classList.add("show");
+  window.scrollTo({top:0,behavior:"smooth"});
+  observeReveals();
+  requestAnimationFrame(()=>r.querySelectorAll(".reveal").forEach((e,i)=>{setTimeout(()=>e.classList.add("in"), Math.min(i*60,560));}));
+  setTimeout(()=>{const b=r.querySelector(".sync-bar"); if(b) b.style.width=b.dataset.w+"%";},520);
+  setTimeout(()=>{const mp=$("mainPortrait"); if(mp) mp.classList.add("lit");},700);
+}
+
+function copyResult(name,tag,sync){
+  const txt=`나의 연애 스타일 공주는 「${name}」 (싱크로율 ${sync}%) — ${tag} ✨ 당신은 어떤 공주일까요?`;
+  navigator.clipboard?.writeText(txt).then(
+    ()=>alert("결과가 복사되었어요! 친구에게 붙여넣어 보세요 ✨\n\n"+txt),
+    ()=>prompt("아래 내용을 복사하세요:",txt)
+  );
+}
+
+/* reveal observer */
+let io;
+function observeReveals(){
+  if(!io){io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{threshold:.15});}
+  document.querySelectorAll(".reveal:not(.in)").forEach(el=>io.observe(el));
+}
+
+/* hero portraits */
+$("heroFan").innerHTML=ORDER.map(k=>`<div class="hp"><div class="portrait">${P[k].svg}</div></div>`).join("");
+observeReveals();
+</script>
+</body>
+</html>
